@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2018",
+    "types": ["node", "jest"],
+    "sourceMap": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "outDir": "dist/out-tsc",
+    "strict": true,
+    "rootDir": "./src",
+    "moduleResolution": "Node",
+    "esModuleInterop": true
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+}
+
