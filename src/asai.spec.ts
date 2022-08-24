@@ -1,28 +1,28 @@
 import { isNer, isNirai, toAsaiList } from './asai';
-import { NER, NIRAI } from './rule';
+import { AsaiType } from './types';
 
 describe('check asai list', () => {
   it ('ஆ', () => {
     const asaiList = toAsaiList('ஆ');
-    expect(asaiList[0]).toBe(NER);
+    expect(asaiList[0].value).toBe(AsaiType.NER);
   });
 
   it ('தொழார்', () => {
     const asaiList = toAsaiList('தொழார்');
-    expect(asaiList[0]).toBe(NIRAI);
+    expect(asaiList[0].value).toBe(AsaiType.NIRAI);
   });
 
   it ('கூவிளம்', () => {
     const asaiList = toAsaiList('கூவிளம்');
-    expect(asaiList[0]).toBe(NER);
-    expect(asaiList[1]).toBe(NIRAI);
+    expect(asaiList[0].value).toBe(AsaiType.NER);
+    expect(asaiList[1].value).toBe(AsaiType.NIRAI);
   });
   
   it ('புளிமாங்கனி', () => {
     const asaiList = toAsaiList('புளிமாங்கனி');
-    expect(asaiList[0]).toBe(NIRAI);
-    expect(asaiList[1]).toBe(NER);
-    expect(asaiList[2]).toBe(NIRAI);
+    expect(asaiList[0].value).toBe(AsaiType.NIRAI);
+    expect(asaiList[1].value).toBe(AsaiType.NER);
+    expect(asaiList[2].value).toBe(AsaiType.NIRAI);
   });
 });
 

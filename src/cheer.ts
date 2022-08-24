@@ -1,4 +1,5 @@
 import { toAsaiList } from "./asai";
+import { AsaiType, Cheer, CheerType } from './types';
 import StateMachine from 'javascript-state-machine';
 
 const getCheerStateMachine = () => {
@@ -51,20 +52,20 @@ export const isMoovasaichcheer = (word: string) => toAsaiList(word).length === 3
 
 export const isNaalasaichcheer = (word: string) => toAsaiList(word).length === 4;
 
-export const toCheer = (word: string) => {
+export const toCheer = (word: string): Cheer => {
   let asaiList = toAsaiList(word);
 
-  const cheer = {
+  const cheer: Cheer = {
     asaiList: [...asaiList],
-    cheer: '',
+    value: CheerType.NOT_POPULATED,
     cheerOrder: asaiList.length
   };
   
   const fsm = getCheerStateMachine();
   let nextAsai = asaiList.shift();
   while((asaiList && asaiList.length > 0) || nextAsai) {
-    if (nextAsai && fsm.can(nextAsai)) {
-      fsm[nextAsai.toLowerCase()]();
+    if (nextAsai && fsm.can(AsaiType[nextAsai.value])) {
+      fsm[AsaiType[nextAsai.value].toLowerCase()]();
       nextAsai = asaiList.shift();
     } else {
       break;
@@ -72,7 +73,7 @@ export const toCheer = (word: string) => {
   }
 
   if (asaiList && asaiList.length === 0) {
-    cheer.cheer = fsm.state;
+    cheer.value = CheerType[fsm.state as keyof typeof CheerType];
   }
 
   return cheer;

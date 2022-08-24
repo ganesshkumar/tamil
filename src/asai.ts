@@ -1,6 +1,6 @@
-import { letterRule, toLetters } from "./letters";
-import { NER, NIRAI } from './rule';
 import StateMachine from 'javascript-state-machine';
+import { toAlavu, toLetters } from "./letters";
+import { Alavu, AlavuType, Asai, AsaiType } from "./types";
 
 const getAsaiStateMachine = () => {
   return new StateMachine({
@@ -19,37 +19,42 @@ const getAsaiStateMachine = () => {
 }
 
 export const getRulesByLetters = (word: string) => {
-  return toLetters(word).map(letter => letterRule(letter));
+  return toAlavu(toLetters(word));
 }
 
-export const toAsaiList = (word: string): string[] => {
-  const asai: string[] = [];
+export const toAsaiList = (word: string): Asai[] => {
+  const asaiList: Asai[] = [];
 
-  let letters = getRulesByLetters(word).filter(letter => !!letter);
-  let nextLetter = letters.shift();
+  let alavuList = toAlavu(toLetters(word)).filter(letter => !!letter);
+  let nextAlavu = alavuList.shift();
+  let part: Alavu[] = [];
 
-  while ((letters && letters.length > 0) || nextLetter) {
+  while ((alavuList && alavuList.length > 0) || nextAlavu) {
     const fsm = getAsaiStateMachine();
 
-    while(nextLetter && fsm.can(nextLetter)) {
-      fsm[nextLetter.toLowerCase()]();
-      nextLetter = letters.shift();
+    while(nextAlavu && fsm.can(AlavuType[nextAlavu.value])) {
+      fsm[AlavuType[nextAlavu.value].toLowerCase()]();
+      part.push(nextAlavu);
+      nextAlavu = alavuList.shift();
     }
 
-    asai.push(fsm.state.split('_')[0]);
+    const asai = AsaiType[fsm.state.split('_')[0] as keyof typeof AsaiType];
+    asaiList.push({
+      value: asai,
+      part: [...part]
+    });
+    part = [];
   }
 
-  return asai;
+  return asaiList;
 }
-
-// export const isOrasaichcheer = (word: string) => toAsaiList(word).length === 1;
 
 export const isNer = (word: string) => {
   const asai = toAsaiList(word);
-  return asai.length === 1 && asai[0] === NER;
+  return asai.length === 1 && asai[0].value === AsaiType.NER;
 }
 
 export const isNirai = (word: string) => {
   const asai = toAsaiList(word);
-  return asai.length === 1 && asai[0] === NIRAI;
+  return asai.length === 1 && asai[0].value === AsaiType.NIRAI;
 }

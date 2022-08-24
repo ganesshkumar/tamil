@@ -1,4 +1,5 @@
 import { KURIL, NEDIL, OTRU } from "./rule"
+import { Letter, Alavu, AlavuType } from './types';
 
 // constants
 export const TA_ACCENT_LEN = 13  // 12 + 1
@@ -1063,37 +1064,37 @@ export const tamil_letters_split: Record<string, string[]> = {
   "க்ஷௌ": ["க்ஷ்", "ஔ"],
 }
 
-export const isKuril = (letter: string) => {
+export const isKuril = (letter: string): boolean => {
   return kuril_letters.includes(tamil_letters_split[letter][1]);
 }
 
-export const isNedil = (letter: string) => {
+export const isNedil = (letter: string): boolean => {
   return nedil_letters.includes(tamil_letters_split[letter][1]);
 }
 
-export const isMei = (letter: string) => {
+export const isMei = (letter: string): boolean => {
   return tamil_letters_split[letter][1] === '';
 }
 
 export const isOtru = isMei;
 
-export const letterRule = (letter: string): string => {
+const letterAlavu = (letter: Letter): AlavuType => {
   if (isKuril(letter)) {
-    return KURIL;
+    return AlavuType.KURIL;
   }
 
   if (isNedil(letter)) {
-    return NEDIL;
+    return AlavuType.NEDIL;
   }
 
   if (isOtru(letter)) {
-    return OTRU;
+    return AlavuType.OTRU;
   }
 
-  return '';
+  throw new Error(`can not deduce Alavu for letter: ${letter}`);
 }
 
-export const toLetters = (word: string): string[] => {
+export const toLetters = (word: string): Letter[] => {
   const letters: string[] = []
 
   while(word) {
@@ -1107,4 +1108,13 @@ export const toLetters = (word: string): string[] => {
   }
 
   return letters;
+}
+
+export const toAlavu = (word: Letter[]): Alavu[] => {
+  return word.map(letter => {
+    return {
+      letter: letter,
+      value: letterAlavu(letter)
+    };
+  });
 }
